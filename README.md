@@ -1,1 +1,0 @@
-# saml-wf-openshift-local

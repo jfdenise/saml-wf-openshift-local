@@ -1,0 +1,17 @@
+build:
+  uri: https://github.com/jfdenise/saml-wf-openshift-local
+  s2i:
+    builderImage: quay.io/jdenise/wildfly-s2i-saml
+deploy:
+  replicas: 1
+  volumes:
+    - name: saml-keystore-volume
+      secret:
+        secretName: saml-app-secret
+  volumeMounts:
+    - name: saml-keystore-volume
+      mountPath: /etc/sso-saml-secret-volume
+      readOnly: true
+  envFrom:
+    - secretRef:
+        name: saml-secret
