@@ -8,6 +8,9 @@ Openshift local, WildFly application secured with Keycloak SAML
 Download an openshift local installation: https://console.redhat.com/openshift/create/local
 Setup and start Openshift local: https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.16/html/getting_started_guide/index
 
+Set limit ranges required to avoid pod to consume all memory.
+oc apply -f limit-ranges.yaml 
+
 2- Configure keycloak
 
 * Configure keycloak operator from Openshift Console as documented in: https://www.keycloak.org/operator/installation
@@ -33,6 +36,9 @@ oc create secret generic saml-app-secret --from-file=keystore.jks=./keystore.jks
 
 3- Build and deploy the example
 
+* Create the secret that contains the application env 
+
+oc apply -f saml-secret.yaml
 
 * Build and Deploy the application
 
@@ -43,13 +49,13 @@ helm install saml-app -f helm.yaml wildfly/wildfly
 ```yaml
 stringData:
   ...
-  HOSTNAME_HTTPS: <saml-app application route>/saml-app
+  HOSTNAME_HTTPS: <saml-app application route>
 ```
 
 The value of `HOSTNAME_HTTPS` corresponds to the output of
 
 ```
-echo $(oc get route saml-app --template='{{ .spec.host }}/saml-app')
+echo $(oc get route saml-app --template='{{ .spec.host }}')
 ```
 
 Then update the secret with `oc apply -f saml-secret.yaml`.
